@@ -136,8 +136,16 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
         error: 'Product with this name already exists'
       });
     }
-
-    const product = await Product.create(data);
+    
+    console.log('Creating product with data:', data);
+    
+    // Generate slug from name
+    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    
+    const product = await Product.create({
+      ...data,
+      slug
+    });
 
     const populatedProduct = await Product.findById(product._id)
       .populate('categoryId', 'name');
